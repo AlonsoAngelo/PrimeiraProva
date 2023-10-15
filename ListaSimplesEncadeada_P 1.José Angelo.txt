@@ -1,0 +1,138 @@
+
+//José Do Espirito Santo Angelo
+public class ListaSimplesEncadeada<T extends Comparable<T>> extends Lista<T> {
+
+	    private No<T> primeiro;
+	    private No<T> fim;
+	    private int qtdItens;
+
+	    public ListaSimplesEncadeada() {
+	    }
+
+	    @Override
+	    public void incluir(T elemento) throws Exception {
+
+	        qtdItens++;
+	        if (primeiro == null) {
+	            primeiro = new No<>(elemento);
+	            fim = primeiro;
+	        } else {
+	            fim.proximo = new No<T>(elemento);
+	            fim = fim.proximo;
+	        }
+	    }
+	    public T get(int posicao) throws Exception {
+	        if (posicao > (qtdItens - 1) || posicao < 0) {
+	            throw new RuntimeException("Posição solicitada não existe na lista");
+	        }
+	        if (qtdItens == 0) {
+	            throw new RuntimeException("Lista está vazia");
+	        }
+	        No<T> noAtual = primeiro;
+	        for (int i = 0; i < posicao; i++) {
+	            noAtual = noAtual.proximo;
+	        }
+	        return noAtual.dado;
+	    }
+
+	    public int getPosElemento(T elemento) throws Exception {
+	        if (qtdItens == 0) {
+	            throw new RuntimeException("Lista está vazia");
+	        }
+
+	        No<T> noAtual = primeiro;
+	        for (int i = 0; noAtual != null; i++) {  
+	            if (noAtual.dado.compareTo(elemento) == 0) {
+	                return i;
+	            }
+	            noAtual = noAtual.proximo;
+	        }
+	        return -1;
+	    }
+	    @Override
+	    public void remover(int posicao) throws Exception {
+	        if (posicao > (qtdItens - 1) || posicao < 0) {
+	            throw new RuntimeException("Posição solicitada não existe na lista");
+	        }
+	        if (qtdItens == 0) {
+	            throw new RuntimeException("Lista está vazia");
+	        }
+	        if (posicao == 0) {  
+	            primeiro = primeiro.proximo;
+	        } else if (posicao == (qtdItens - 1)) {  
+	            No<T> noAtual = primeiro;
+	            for (int i = 0; i < (posicao - 1); i++) {
+	                noAtual = noAtual.proximo;
+	            }
+	            noAtual.proximo = null;
+	            fim = noAtual;
+	        } else {
+	            No<T> noAtual = primeiro;
+	            No<T> noAuxiliar = primeiro;
+	            for (int i = 0; i < posicao; i++) {
+	                noAuxiliar = noAtual;
+	                noAtual = noAtual.proximo;
+	            }
+	            noAuxiliar.proximo = noAtual.proximo;
+	        }
+	        qtdItens--;
+	    }
+	    @Override
+	    public int getTamanho() {
+	        return qtdItens;
+	    }
+	    public void limpar() {
+	        primeiro = null;
+	        qtdItens = 0;
+	    }
+	    @Override
+	    public boolean contem(T elemento) throws Exception {
+	        No<T> noAtual = primeiro;
+	        for (int i = 0; noAtual != null; i++) {  
+	            if (noAtual.dado.compareTo(elemento) == 0) {
+	                return true;
+	            }
+	            noAtual = noAtual.proximo;
+	        }
+	        return false;
+	    }
+	    @Override
+	    public int compareTo(Lista<T> item) {
+	        try {
+	            boolean isMesmaOrdem = true;
+	            No<T> noAtual = primeiro;
+	            for (int i = 0; noAtual != null; i++) { 
+	                T dadoListaAtual = noAtual.dado;
+	                T dadoListaArgumento = item.get(i);
+
+	                if (dadoListaAtual.compareTo(dadoListaArgumento) != 0) {
+	                    isMesmaOrdem = false;
+	                    break;
+	                }
+	                noAtual = noAtual.proximo;
+	            }
+	            if (isMesmaOrdem) return 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        if (qtdItens < item.getTamanho()) return -1;
+
+	        return +1;
+	    }
+	    @Override
+	    @SuppressWarnings("unchecked")
+	    public T[] TransformarEmVetor() {
+	        T[] vetor = (T[]) new Object[qtdItens];
+
+	        vetor = transformarEmVetorRecursivo(vetor, 0, primeiro);
+	        return vetor;
+	    }
+
+	    private T[] transformarEmVetorRecursivo(T[] vetor, int indice, No<T> noAtual) {
+	        if (noAtual == null) return vetor;
+
+	        vetor[indice] = noAtual.dado;
+	        return transformarEmVetorRecursivo(vetor, indice + 1, noAtual.proximo);
+	    }
+	}
+}
